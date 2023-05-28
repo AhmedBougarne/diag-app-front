@@ -7,65 +7,114 @@ import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
-import { FC, useState } from "react";
-import { Questions } from "../App";
-export interface Question {
-  id: number; // Note that the `null assertion` `!` is required in strict mode.
-  questionText: string;
-  questionTitle: string;
-}
-export interface Choice {
-  choiceId: number; // Note that the `null assertion` `!` is required in strict mode.
-  nextQuestion: number | null;
-  previousQuestion: number | null;
-  questionId: number;
-  value: string;
-  response: string | null;
-}
+import { FC, useEffect, useState } from "react";
+import { Question } from "../types/Question";
+import { Choice } from "../types/Choice";
+import {
+  getChoicesUsingQuestionId,
+  getQuestionUsingChoiceId,
+} from "../utils/utils";
+
 interface Props {
-  question: Question;
   choices: Choice[];
-  updateCurrentQuestion: any;
+  questions: Question[];
+  firstQuestion: Question;
 }
-const QuestionCard: FC<Props> = ({
-  question,
-  choices,
-  updateCurrentQuestion,
-}) => {
-  const [valueChoice, setValueChoice] = useState(
-    choices.filter((t) => t.questionId === question.id)[0].value
-  );
+const QuestionCard: FC<Props> = ({ choices, questions, firstQuestion }) => {
+  const [currentChoice, setCurrentChoice] = useState<Choice>();
+  const [currentQuestion, setCurrentQuestion] =
+    useState<Question>(firstQuestion);
+  const [response, setResponse] = useState<string>("");
+  const [choicesState, setChoices] = useState(choices);
   const handleChange = (event: any, value: string) => {
-    const choice = choices.filter((c) => c.value === value)[0];
-    setValueChoice(choice.value);
+    setCurrentChoice(choices.filter((c) => c.value === value)[0]);
   };
+  const handleNext = () => {
+    if (currentChoice && currentChoice.nextQuestion)
+      setCurrentQuestion(
+        questions.filter((q) => q.id === currentChoice?.nextQuestion)[0]
+      );
+    else {
+      if (currentChoice && currentChoice.response) {
+        setResponse(currentChoice.response);
+      }
+    }
+  };
+  const handleBack = () => {
+    if (currentChoice && currentChoice?.previousQuestion) {
+      setCurrentQuestion(
+        questions.filter((q) => q.id === currentChoice?.previousQuestion)[0]
+      );
+    }
+  };
+
+  const resetForm = () => {
+    setCurrentQuestion(firstQuestion);
+    setResponse("");
+  };
+
+  useEffect(() => {
+    if (currentQuestion && currentQuestion.id) {
+      setCurrentChoice(
+        getChoicesUsingQuestionId(choices, currentQuestion.id)[0]
+      );
+      setChoices(choices.filter((c) => c.questionId === currentQuestion.id));
+    }
+  }, [currentQuestion]);
+  useEffect(() => {}, [handleNext, handleBack]);
+  if (response.length <= 0)
+    return (
+      <Card sx={{ minWidth: 275 }}>
+        <CardContent>
+          <Typography sx={{ fontSize: 20 }} color="text.primary" gutterBottom>
+            {currentQuestion.questionTitle}
+          </Typography>
+
+          <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
+            {currentQuestion.questionText}
+          </Typography>
+        </CardContent>
+        <FormControl style={{ marginLeft: 10 }}>
+          {currentChoice && (
+            <RadioGroup
+              aria-labelledby="demo-radio-buttons-group-label"
+              name="radio-buttons-group"
+              value={currentChoice.value}
+              onChange={handleChange}
+            >
+              {choicesState.map((choice: Choice) => (
+                <FormControlLabel
+                  key={choice.choiceId}
+                  value={choice.value}
+                  control={<Radio />}
+                  label={choice.value}
+                />
+              ))}
+            </RadioGroup>
+          )}
+        </FormControl>
+        <CardActions
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignContent: "space-between",
+          }}
+        >
+          <Button size="small" onClick={() => handleBack()}>
+            Back
+          </Button>
+          <Button size="small" onClick={() => handleNext()}>
+            Suivant
+          </Button>
+          <Button size="small">Effacer formulaire</Button>
+        </CardActions>
+      </Card>
+    );
   return (
     <Card sx={{ minWidth: 275 }}>
       <CardContent>
-        <Typography sx={{ fontSize: 20 }} color="text.primary" gutterBottom>
-          {question.questionTitle}
-        </Typography>
-
-        <Typography sx={{ fontSize: 14 }} color="text.secondary" gutterBottom>
-          {question.questionText}
-        </Typography>
+        <Typography>{currentChoice?.response}</Typography>
       </CardContent>
-      <FormControl style={{ marginLeft: 10 }}>
-        <RadioGroup
-          aria-labelledby="demo-radio-buttons-group-label"
-          name="radio-buttons-group"
-          value={valueChoice}
-          onChange={handleChange}
-        >
-          {choices.map((choice: Choice) => (
-            <FormControlLabel
-              value={choice.value}
-              control={<Radio />}
-              label={choice.value}
-            />
-          ))}
-        </RadioGroup>
-      </FormControl>
       <CardActions
         style={{
           display: "flex",
@@ -73,30 +122,12 @@ const QuestionCard: FC<Props> = ({
           alignContent: "space-between",
         }}
       >
-        <Button size="small" onClick={() => {
-            updateCurrentQuestion(
-              Questions.filter(
-                (q) =>
-                  q.id ===
-                  choices.filter((c) => c.value === valueChoice)[0].previousQuestion
-              )[0]
-            );
-          }}>Back</Button>
-        <Button
-          size="small"
-          onClick={() => {
-            updateCurrentQuestion(
-              Questions.filter(
-                (q) =>
-                  q.id ===
-                  choices.filter((c) => c.value === valueChoice)[0].nextQuestion
-              )[0]
-            );
-          }}
-        >
-          Suivant
+        <Button size="small" onClick={() => handleBack()}>
+          Envoyer
         </Button>
-        <Button size="small">Effacer formulaire</Button>
+        <Button size="small" onClick={() => resetForm()}>
+          Commencer dès le début
+        </Button>
       </CardActions>
     </Card>
   );

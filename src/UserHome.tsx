@@ -4,6 +4,7 @@ import "./App.css";
 import { $container, $questionsContainer } from "./App.style";
 import QuestionCard from "./components/QuestionCard";
 import { APP_BASE_URL } from "./constants";
+import axiosApiInstance from "./interceptors/axios";
 import { Choice } from "./types/Choice";
 import { Question } from "./types/Question";
 
@@ -14,13 +15,13 @@ function UserHome() {
 
   useEffect(() => {
     async function getData() {
-      const { data: questionsResponse } = await axios.get(
+      const { data: questionsResponse } = await axiosApiInstance.get(
         `${APP_BASE_URL}/questions`
       );
-      const { data: choicesResponse } = await axios.get(
+      const { data: choicesResponse } = await axiosApiInstance.get(
         `${APP_BASE_URL}/choices`
       );
-      const {data: firstQuestion}= await axios.get(
+      const {data: firstQuestion}= await axiosApiInstance.get(
         `${APP_BASE_URL}/questions/first`
       )
       setQuestions(questionsResponse);

@@ -42,7 +42,6 @@ enum Role {
 }
 export default function SignIn() {
   const navigate = useNavigate();
-
   const [role, setRole] = React.useState<Role>(Role.agent);
   const [user, setUser] = React.useState({
     username: "",
@@ -62,6 +61,7 @@ export default function SignIn() {
         },
       }
     );
+    localStorage.setItem("jwt", response.data.jwt);
     if (response.data && response.data.authenticated) {
       if (role === Role.agent) {
         navigate("/home");

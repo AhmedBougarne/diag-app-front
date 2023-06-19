@@ -87,7 +87,11 @@ export default function SignIn() {
           <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
             <LockOutlinedIcon />
           </Avatar>
-          <Typography component="h1" variant="h5">
+          <Typography
+            component="h1"
+            variant="h5"
+            style={{ fontFamily: "Tajawal" }}
+          >
             Sign in
           </Typography>
           <Box
@@ -97,6 +101,7 @@ export default function SignIn() {
               flexDirection: "column",
               alignItems: "center",
             }}
+            style={{ fontFamily: "Tajawal" }}
           >
             <FormLabel id="demo-radio-buttons-group-label">Role</FormLabel>
             <RadioGroup
@@ -116,11 +121,13 @@ export default function SignIn() {
                 value={Role.admin}
                 control={<Radio />}
                 label={"Admin"}
+                style={{ fontFamily: "Tajawal" }}
               />
               <FormControlLabel
                 value={Role.agent}
                 control={<Radio />}
                 label={"Agent"}
+                style={{ fontFamily: "Tajawal" }}
               />
             </RadioGroup>
           </Box>
@@ -134,6 +141,7 @@ export default function SignIn() {
                 id="username"
                 label="Username"
                 name="username"
+                style={{ fontFamily: "Tajawal" }}
                 onChange={(event) => {
                   setUser({ ...user, username: event.target.value });
                 }}
@@ -146,6 +154,7 @@ export default function SignIn() {
                 label="Password"
                 type="password"
                 id="password"
+                style={{ fontFamily: "Tajawal" }}
                 autoComplete="current-password"
                 onChange={(event) => {
                   setUser({ ...user, password: event.target.value });
@@ -161,6 +170,7 @@ export default function SignIn() {
                 value={user.crmId}
                 label="CRM ID"
                 name="text"
+                style={{ fontFamily: "Tajawal" }}
                 onChange={(event) => {
                   setUser({ ...user, crmId: event.target.value });
                 }}
@@ -170,6 +180,9 @@ export default function SignIn() {
           <Button
             fullWidth
             variant="contained"
+            color="success"
+            style={{ fontFamily: "Tajawal" }}
+
             sx={{ mt: 3, mb: 2 }}
             onClick={() => {
               handleSubmit();

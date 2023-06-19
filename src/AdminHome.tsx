@@ -84,7 +84,9 @@ export default function AdminHome() {
                 setCurrentQuestion(event.target.value);
               }}
             >
-              {questions.map((q: any) => (
+              {questions &&
+                questions.length > 0 &&
+                questions.map((q: any) => (
                 <MenuItem value={q.questionText}>{q.questionText}</MenuItem>
               ))}
             </Select>
@@ -133,7 +135,9 @@ export default function AdminHome() {
                 setNextQuestion(event.target.value);
               }}
             >
-              {questions.map((q: any) => (
+              {questions &&
+                questions.length > 0 &&
+                questions.map((q: any) => (
                 <MenuItem value={q.questionText}>{q.questionText}</MenuItem>
               ))}
             </Select>

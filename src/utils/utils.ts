@@ -7,7 +7,7 @@ export const getQuestionUsingChoiceId = (
   choiceId: number
 ) => {
   return questions.filter(
-    (q) => q.id === choices.filter((c) => c.choiceId === choiceId)[0].questionId
+    (q) => q.id === choices.filter((c) => c.id === choiceId)[0].questionId
   )[0];
 };
 

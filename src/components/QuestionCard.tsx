@@ -84,7 +84,7 @@ const QuestionCard: FC<Props> = ({ choices, questions, firstQuestion }) => {
             >
               {choicesState.map((choice: Choice) => (
                 <FormControlLabel
-                  key={choice.choiceId}
+                  key={choice.id}
                   value={choice.value}
                   control={<Radio />}
                   label={choice.value}

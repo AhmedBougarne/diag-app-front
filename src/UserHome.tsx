@@ -11,7 +11,7 @@ import { Question } from "./types/Question";
 function UserHome() {
   const [choices, setChoices] = useState<Choice[]>([]);
   const [questions, setQuestions] = useState<Question[]>([]);
-  const [firstQuestion, setFirstQuestion] = useState<Question>()
+  const [firstQuestion, setFirstQuestion] = useState<Question>();
 
   useEffect(() => {
     async function getData() {
@@ -21,24 +21,24 @@ function UserHome() {
       const { data: choicesResponse } = await axiosApiInstance.get(
         `${APP_BASE_URL}/choices`
       );
-      const {data: firstQuestion}= await axiosApiInstance.get(
+      const { data: firstQuestion } = await axiosApiInstance.get(
         `${APP_BASE_URL}/questions/first`
-      )
+      );
       setQuestions(questionsResponse);
       setChoices(choicesResponse);
-      setFirstQuestion(firstQuestion)
+      setFirstQuestion(firstQuestion);
     }
     getData();
   }, []);
 
   return (
-    <div className="App" style={$container}>
+    <div className="App"  style={{ ...$container,fontFamily: "Tajawal" }}>
       <div style={$questionsContainer}>
         {questions.length > 0 && choices.length > 0 && firstQuestion && (
           <QuestionCard
             choices={choices}
             questions={questions}
-            firstQuestion = {firstQuestion}
+            firstQuestion={firstQuestion}
           />
         )}
       </div>

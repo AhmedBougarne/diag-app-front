@@ -1,5 +1,7 @@
+import { Box, AppBar, Toolbar, IconButton, Typography, Button } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./App.css";
 import { $container, $questionsContainer } from "./App.style";
 import QuestionCard from "./components/QuestionCard";
@@ -30,8 +32,28 @@ function UserHome() {
     }
     getData();
   }, []);
-
+  const navigate = useNavigate()
   return (
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar style={{backgroundColor: "#BA5050"}} color="primary" position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            ></IconButton>
+            <Typography  variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Agent process
+            </Typography>
+            <Button color="warning" variant="contained" onClick={() => navigate("/")}>
+              Deconnexion
+            </Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
     <div className="App"  style={{ ...$container,fontFamily: "Tajawal" }}>
       <div style={$questionsContainer}>
         {questions.length > 0 && choices.length > 0 && firstQuestion && (
@@ -43,6 +65,7 @@ function UserHome() {
         )}
       </div>
     </div>
+    </>
   );
 }
 

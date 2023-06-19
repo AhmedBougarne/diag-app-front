@@ -6,7 +6,18 @@ import {
   useGridApiRef,
 } from "@mui/x-data-grid";
 
-import { Button, FormControl, MenuItem, Select, Stack } from "@mui/material";
+import {
+  AppBar,
+  Box,
+  Button,
+  FormControl,
+  IconButton,
+  MenuItem,
+  Select,
+  Stack,
+  Toolbar,
+  Typography,
+} from "@mui/material";
 import {
   getChoices,
   getQuestions,
@@ -20,6 +31,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch } from "./store";
 import { Question } from "./types/Question";
+import { useNavigate } from "react-router-dom";
 
 //nested data is ok, see accessorKeys in ColumnDef below
 
@@ -87,8 +99,8 @@ export default function AdminHome() {
               {questions &&
                 questions.length > 0 &&
                 questions.map((q: any) => (
-                <MenuItem value={q.questionText}>{q.questionText}</MenuItem>
-              ))}
+                  <MenuItem value={q.questionText}>{q.questionText}</MenuItem>
+                ))}
             </Select>
           </FormControl>
         );
@@ -138,8 +150,8 @@ export default function AdminHome() {
               {questions &&
                 questions.length > 0 &&
                 questions.map((q: any) => (
-                <MenuItem value={q.questionText}>{q.questionText}</MenuItem>
-              ))}
+                  <MenuItem value={q.questionText}>{q.questionText}</MenuItem>
+                ))}
             </Select>
           </FormControl>
         );
@@ -217,83 +229,105 @@ export default function AdminHome() {
     dispatch(addChoice());
   };
   const handleEditQuestion = () => {};
+  const navigate = useNavigate();
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 30,
-      }}
-    >
-      <div style={{ height: 600, width: "70%", marginBottom: 30 }}>
-        <Stack direction="row" spacing={1}>
-          <Button
-            style={{ marginBottom: 10 }}
-            variant="contained"
-            color="success"
-            size="small"
-            onClick={handleAddQuestion}
-          >
-            Ajouter une question
-          </Button>
-        </Stack>
-        {questions && questions.length > 0 && (
-          <DataGrid
-            rows={questions}
-            style={{ fontFamily: "Tajawal" }}
-            columns={questionColumns}
-            getRowId={(row) => row.id}
-            processRowUpdate={async (newRow, oldRow) => {
-              await dispatch(editQuestion(newRow));
-              await dispatch(getQuestions());
-            }}
-            slots={{ toolbar: GridToolbar }}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500 },
-              },
-            }}
-          />
-        )}
+    <>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar style={{backgroundColor: "#BA5050"}} color="primary" position="static">
+          <Toolbar>
+            <IconButton
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            ></IconButton>
+            <Typography  variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Dashboard
+            </Typography>
+            <Button color="warning" variant="contained" onClick={() => navigate("/")}>
+              Deconnexion
+            </Button>
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <div style={{ height: 600, width: "70%", marginBottom: 30 }}>
+          <Stack direction="row" spacing={1}>
+            <Button
+              style={{ marginBottom: 10, marginTop: 30 }}
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={handleAddQuestion}
+            >
+              Ajouter une question
+            </Button>
+          </Stack>
+          {questions && questions.length > 0 && (
+            <DataGrid
+              rows={questions}
+              style={{ fontFamily: "Tajawal" }}
+              columns={questionColumns}
+              getRowId={(row) => row.id}
+              processRowUpdate={async (newRow, oldRow) => {
+                await dispatch(editQuestion(newRow));
+                await dispatch(getQuestions());
+              }}
+              slots={{ toolbar: GridToolbar }}
+              slotProps={{
+                toolbar: {
+                  showQuickFilter: true,
+                  quickFilterProps: { debounceMs: 500 },
+                },
+              }}
+            />
+          )}
+        </div>
+        <div style={{ height: 600, width: "70%", marginTop: 50 }}>
+          <Stack direction="row" spacing={1}>
+            <Button
+              style={{ marginBottom: 10 }}
+              variant="contained"
+              color="success"
+              size="small"
+              onClick={handleAddChoice}
+            >
+              Ajouter les choix
+            </Button>
+          </Stack>
+          {choices && choices.length > 0 && (
+            <DataGrid
+              apiRef={ref}
+              rows={choices}
+              columns={choiceColumns}
+              style={{ fontFamily: "Tajawal" }}
+              getRowId={(row) => row.id}
+              slots={{ toolbar: GridToolbar }}
+              slotProps={{
+                toolbar: {
+                  showQuickFilter: true,
+                  quickFilterProps: { debounceMs: 500 },
+                  color: "red",
+                },
+              }}
+              processRowUpdate={async (newRow, oldRow) => {
+                console.log(newRow);
+                await dispatch(editChoice(newRow));
+                await dispatch(getChoices());
+              }}
+            />
+          )}
+        </div>
       </div>
-      <div style={{ height: 600, width: "70%", marginTop: 50 }}>
-        <Stack direction="row" spacing={1}>
-          <Button
-            style={{ marginBottom: 10 }}
-            variant="contained"
-            color="success"
-            size="small"
-            onClick={handleAddChoice}
-          >
-            Ajouter les choix
-          </Button>
-        </Stack>
-        {choices && choices.length > 0 && (
-          <DataGrid
-            apiRef={ref}
-            rows={choices}
-            columns={choiceColumns}
-            style={{ fontFamily: "Tajawal" }}
-            getRowId={(row) => row.id}
-            slots={{ toolbar: GridToolbar }}
-            slotProps={{
-              toolbar: {
-                showQuickFilter: true,
-                quickFilterProps: { debounceMs: 500 },
-                color: "red",
-              },
-            }}
-            processRowUpdate={async (newRow, oldRow) => {
-              console.log(newRow);
-              await dispatch(editChoice(newRow));
-              await dispatch(getChoices());
-            }}
-          />
-        )}
-      </div>
-    </div>
+    </>
   );
 }
